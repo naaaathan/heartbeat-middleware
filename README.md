@@ -8,7 +8,7 @@
 
 * `Java 11`
 
-## 🚀 Instalando voting-session API
+## 🚀 Configurando e rodando o projeto
 
 Para buildar e deployar o projeto localmente, execute o seguinte comando:
 
