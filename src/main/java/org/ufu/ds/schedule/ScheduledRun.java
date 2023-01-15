@@ -9,16 +9,16 @@ public class ScheduledRun {
 
     TimerTask timerTask;
 
-    Long delay;
+    Long period;
 
-    public ScheduledRun(Timer timer, TimerTask timerTask, Long delay) {
+    public ScheduledRun(Timer timer, TimerTask timerTask, Long period) {
         this.timer = timer;
         this.timerTask = timerTask;
-        this.delay = delay;
+        this.period = period;
     }
 
     public void schedule() {
-        timer.schedule(timerTask, delay);
+        timer.schedule(timerTask, 0, period);
     }
 
 
