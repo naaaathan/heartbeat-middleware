@@ -1,24 +1,27 @@
 package main.java.org.ufu.ds.heartbeat;
 
+import main.java.org.ufu.ds.Constants;
+import main.java.org.ufu.ds.election.HostInfo;
 import main.java.org.ufu.ds.schedule.ScheduledRun;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HeartBeatSender extends HeartBeat {
 
     private SocketChannel socketChannel;
 
-    private final Map<String, Integer> nodeHostAndPortMap;
+    private final List<HostInfo> hostInfoList;
 
-    public HeartBeatSender(Long timeBetweenHeartbeats) {
-        this.timeBetweenHeartbeats = timeBetweenHeartbeats;
-        this.nodeHostAndPortMap = loadNodeProperties();
+    public HeartBeatSender(List<HostInfo> hostInfoList) {
+        this.timeBetweenHeartbeats = Constants.BEAT_INTERVAL;
+        this.hostInfoList = hostInfoList;
+
     }
 
 
@@ -36,12 +39,14 @@ public class HeartBeatSender extends HeartBeat {
             public void run() {
                 try {
 
-                    for (Map.Entry<String, Integer> entry : nodeHostAndPortMap.entrySet()) {
+                    for (HostInfo hostInfo : hostInfoList) {
 
                         socketChannel = SocketChannel.open();
 
-                        String hostname = entry.getKey();
-                        Integer port = entry.getValue();
+                        String hostname = hostInfo.getHostName();
+                        Integer port = hostInfo.getPort();
+
+                        System.out.printf("Sending heartbeat for hostname " + hostname + " and port = " + port + "\n");
 
                         socketChannel.connect(new InetSocketAddress(hostname, port));
 
@@ -50,9 +55,6 @@ public class HeartBeatSender extends HeartBeat {
 
                         socketChannel.close();
 
-                        System.out.printf("Sending heartbeat for hostname " + hostname + " and port = " + port + "\n");
-
-
                     }
 
                 } catch (IOException e) {
@@ -60,33 +62,6 @@ public class HeartBeatSender extends HeartBeat {
                 }
             }
         };
-
-    }
-
-
-    public Map<String, Integer> loadNodeProperties() {
-
-        Properties properties = new Properties();
-
-        try {
-            properties.load(Files.newInputStream(Paths.get("main/java/org/ufu/ds/nodes.properties")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Map<String, Integer> mapHostToPorts = new HashMap<>();
-
-        for (int hostIndex = 1; hostIndex <= properties.size() / 2; hostIndex++) {
-            String keyStringHost = "node" + hostIndex + ".host";
-            String keyStringPort = "node" + hostIndex + ".port";
-
-            System.out.println("put="+properties.getProperty(keyStringHost));
-
-            mapHostToPorts.put(properties.getProperty(keyStringHost), Integer.valueOf(properties.getProperty(keyStringPort)));
-
-        }
-
-        return mapHostToPorts;
 
     }
 

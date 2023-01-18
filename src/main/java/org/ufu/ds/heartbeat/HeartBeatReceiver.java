@@ -1,49 +1,73 @@
 package main.java.org.ufu.ds.heartbeat;
 
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import main.java.org.ufu.ds.Constants;
+import main.java.org.ufu.ds.election.HostInfo;
+import main.java.org.ufu.ds.election.Role;
+
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HeartBeatReceiver extends HeartBeat {
 
-    private ServerSocketChannel serverSocketChannel;
-    private final int port;
+    private final List<HostInfo> hostInfo;
 
-    public HeartBeatReceiver(Long heartBeatIntervalInMs, int port) {
-        this.timeBetweenHeartbeats = heartBeatIntervalInMs;
-        this.port = port;
+    private Long lastHeartBeatReceived = System.currentTimeMillis();
+
+    AtomicBoolean recevingHeartBeat = new AtomicBoolean(true);
+
+    public HeartBeatReceiver(List<HostInfo> hostInfoList) {
+        this.timeBetweenHeartbeats = Constants.BEAT_INTERVAL;
+        this.hostInfo = hostInfoList;
     }
 
     @Override
     public void startHeartBeat() {
 
-        try {
-            serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.bind(new InetSocketAddress(port));
+        new Thread(() -> {
 
-            while (true) {
+            try {
 
-                System.out.println("StartHeartBeat");
+                while (recevingHeartBeat.get()) {
 
-                SocketChannel socketChannel = serverSocketChannel.accept();
+                    long timeNow = System.currentTimeMillis();
+                    long timeSpent = timeNow - lastHeartBeatReceived;
 
-                ByteBuffer buffer = ByteBuffer.allocate(1024);
-                int readBytes = socketChannel.read(buffer);
-                buffer.flip();
-                byte[] data = new byte[readBytes];
-                buffer.get(data);
-                String message = new String(data);
 
-                System.out.println("Received: " + message);
-
-                socketChannel.close();
+                    if (timeSpent > timeBetweenHeartbeats + 100L) {
+                        System.out.println("time spent=" + timeSpent);
+                        promoteElection();
+                        recevingHeartBeat.set(false);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }).start();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    }
+
+    public void receiveHeartBeat() {
+        System.out.println("Received HeartBeat");
+        this.lastHeartBeatReceived = System.currentTimeMillis();
     }
 
 
+    private void promoteElection() throws UnknownHostException {
+
+        System.out.println("promoteElection begin");
+
+        HostInfo hostSendingElection = Helper.getThisHostInfo(hostInfo);
+
+        if (hostSendingElection == null) {
+            throw new RuntimeException("could not find host in known hosts");
+        }
+        //Promote Election here
+    }
+
+    public void stop() {
+
+        recevingHeartBeat.set(false);
+        Helper.getThisHostInfo(hostInfo).setRole(Role.SEARCHING_LEADER);
+    }
 }
