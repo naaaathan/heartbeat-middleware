@@ -13,4 +13,5 @@
 Para buildar e deployar o projeto localmente, execute o seguinte comando:
 
 ```
-./build-and-execute.sh
+./build.sh
+docker-compose up
