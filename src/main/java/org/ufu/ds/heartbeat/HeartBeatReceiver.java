@@ -1,24 +1,13 @@
 package main.java.org.ufu.ds.heartbeat;
 
 import main.java.org.ufu.ds.Constants;
-import main.java.org.ufu.ds.election.HostInfo;
-import main.java.org.ufu.ds.election.Role;
 
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.nio.ByteBuffer;
 
 public class HeartBeatReceiver extends HeartBeat {
 
-    private final List<HostInfo> hostInfo;
 
-    private Long lastHeartBeatReceived = System.currentTimeMillis();
-
-    AtomicBoolean recevingHeartBeat = new AtomicBoolean(true);
-
-    public HeartBeatReceiver(List<HostInfo> hostInfoList) {
-        this.timeBetweenHeartbeats = Constants.BEAT_INTERVAL;
-        this.hostInfo = hostInfoList;
+    public HeartBeatReceiver() {
     }
 
     @Override
@@ -28,18 +17,8 @@ public class HeartBeatReceiver extends HeartBeat {
 
             try {
 
-                while (recevingHeartBeat.get()) {
+                while (true);
 
-                    long timeNow = System.currentTimeMillis();
-                    long timeSpent = timeNow - lastHeartBeatReceived;
-
-
-                    if (timeSpent > timeBetweenHeartbeats + 100L) {
-                        System.out.println("time spent=" + timeSpent);
-                        promoteElection();
-                        recevingHeartBeat.set(false);
-                    }
-                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -47,27 +26,9 @@ public class HeartBeatReceiver extends HeartBeat {
 
     }
 
-    public void receiveHeartBeat() {
-        System.out.println("Received HeartBeat");
-        this.lastHeartBeatReceived = System.currentTimeMillis();
+    public ByteBuffer receiveHeartBeat(String address) {
+        System.out.println("Received HeartBeat from address = " + address);
+        return ByteBuffer.wrap(Constants.OK.getBytes());
     }
 
-
-    private void promoteElection() throws UnknownHostException {
-
-        System.out.println("promoteElection begin");
-
-        HostInfo hostSendingElection = Helper.getThisHostInfo(hostInfo);
-
-        if (hostSendingElection == null) {
-            throw new RuntimeException("could not find host in known hosts");
-        }
-        //Promote Election here
-    }
-
-    public void stop() {
-
-        recevingHeartBeat.set(false);
-        Helper.getThisHostInfo(hostInfo).setRole(Role.SEARCHING_LEADER);
-    }
 }

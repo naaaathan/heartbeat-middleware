@@ -1,13 +1,11 @@
 package main.java.org.ufu.ds;
 
-import main.java.org.ufu.ds.election.HostInfo;
 import main.java.org.ufu.ds.heartbeat.HeartBeatReceiver;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.List;
 
 public class SocketMessagesHandler {
 
@@ -41,18 +39,15 @@ public class SocketMessagesHandler {
 
                     switch (message) {
                         case Constants.HEARTBEAT:
-                            heartBeatReceiver.receiveHeartBeat();
-                            break;
-                        case Constants.ELECTION:
-                            break;
-                        case Constants.WITHOUT_LEADER:
-                            heartBeatReceiver.stop();
+                            ByteBuffer responseBuffer = heartBeatReceiver.receiveHeartBeat(socketChannel.socket().getInetAddress().getHostAddress());
+                            socketChannel.write(responseBuffer);
                             break;
                     }
                     socketChannel.close();
                 }
             } catch (Exception e) {
                 System.out.println("SocketMessagesHandler error=" + e);
+                e.printStackTrace();
             }
         }).start();
     }

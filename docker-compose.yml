@@ -1,18 +1,18 @@
 version: '3'
 services:
-  follower1:
+  coordinator:
     image: openjdk:11-jdk-slim-buster
     volumes:
       - ./generated:/app
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
-    command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER"]
+    command: ["java", "-jar", "/app/heartbeat-middleware.jar", "COORDINATOR"]
     ports:
       - "8080:80"
     networks:
       ds:
-        ipv4_address: 172.18.0.3
-  follower2:
+        ipv4_address: 172.18.0.2
+  follower1:
     image: openjdk:11-jdk-slim-buster
     volumes:
       - ./generated:/app
@@ -23,19 +23,43 @@ services:
       - "8081:80"
     networks:
       ds:
-        ipv4_address: 172.18.0.2
-  leader:
+        ipv4_address: 172.18.0.3
+  follower2:
     image: openjdk:11-jdk-slim-buster
     volumes:
       - ./generated:/app
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
-    command: ["java", "-jar", "/app/heartbeat-middleware.jar", "LEADER"]
+    command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER_BEAT_SENDER"]
     ports:
       - "8082:80"
     networks:
       ds:
         ipv4_address: 172.18.0.4
+  follower3:
+    image: openjdk:11-jdk-slim-buster
+    volumes:
+      - ./generated:/app
+      - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
+    working_dir: /app
+    command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER_BEAT_SENDER"]
+    ports:
+      - "8083:80"
+    networks:
+      ds:
+        ipv4_address: 172.18.0.5
+  follower4:
+    image: openjdk:11-jdk-slim-buster
+    volumes:
+      - ./generated:/app
+      - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
+    working_dir: /app
+    command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER"]
+    ports:
+      - "8084:80"
+    networks:
+      ds:
+        ipv4_address: 172.18.0.6
 networks:
   ds:
     driver: bridge

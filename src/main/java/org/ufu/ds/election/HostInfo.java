@@ -1,6 +1,8 @@
 package main.java.org.ufu.ds.election;
 
-public class HostInfo {
+import java.io.Serializable;
+
+public class HostInfo implements Serializable {
 
     private int id;
 
@@ -8,16 +10,14 @@ public class HostInfo {
 
     private Integer port;
 
-    private Long processPid;
-
     private Role role;
 
 
-    public HostInfo(int id, String hostName, int port, Long processPid) {
+    public HostInfo(int id, String hostName, int port, Role role) {
         this.id = id;
         this.hostName = hostName;
         this.port = port;
-        this.processPid = processPid;
+        this.role = role;
     }
 
     public String getHostName() {
@@ -34,14 +34,6 @@ public class HostInfo {
 
     public void setPort(Integer port) {
         this.port = port;
-    }
-
-    public Long getProcessPid() {
-        return processPid;
-    }
-
-    public void setProcessPid(Long processPid) {
-        this.processPid = processPid;
     }
 
     public int getId() {
@@ -66,7 +58,6 @@ public class HostInfo {
                 "id=" + id +
                 ", hostName='" + hostName + '\'' +
                 ", port=" + port +
-                ", processPid=" + processPid +
                 ", role=" + role +
                 '}';
     }

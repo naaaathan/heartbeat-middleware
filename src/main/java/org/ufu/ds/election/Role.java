@@ -1,7 +1,7 @@
 package main.java.org.ufu.ds.election;
 
 public enum Role {
-    LEADER,
-    FOLLOWER,
-    SEARCHING_LEADER
+    FOLLOWER_BEAT_SENDER,
+    COORDINATOR,
+    FOLLOWER
 }
