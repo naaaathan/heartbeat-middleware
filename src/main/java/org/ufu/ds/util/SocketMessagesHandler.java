@@ -1,6 +1,7 @@
-package main.java.org.ufu.ds;
+package main.java.org.ufu.ds.util;
 
 import main.java.org.ufu.ds.heartbeat.HeartBeatReceiver;
+import main.java.org.ufu.ds.util.Constants;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

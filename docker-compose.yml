@@ -7,6 +7,7 @@ services:
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
     command: ["java", "-jar", "/app/heartbeat-middleware.jar", "COORDINATOR"]
+    user: root
     ports:
       - "8080:80"
     networks:
@@ -19,6 +20,7 @@ services:
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
     command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER"]
+    user: root
     ports:
       - "8081:80"
     networks:
@@ -31,6 +33,7 @@ services:
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
     command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER_BEAT_SENDER"]
+    user: root
     ports:
       - "8082:80"
     networks:
@@ -43,6 +46,7 @@ services:
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
     command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER_BEAT_SENDER"]
+    user: root
     ports:
       - "8083:80"
     networks:
@@ -55,6 +59,7 @@ services:
       - ./generated/heartbeat-middleware.jar:/app/heartbeat-middleware.jar
     working_dir: /app
     command: ["java", "-jar", "/app/heartbeat-middleware.jar", "FOLLOWER"]
+    user: root
     ports:
       - "8084:80"
     networks:

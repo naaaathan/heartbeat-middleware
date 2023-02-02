@@ -1,4 +1,4 @@
-package main.java.org.ufu.ds;
+package main.java.org.ufu.ds.election;
 
 public class ElectionMessage extends Message {
 

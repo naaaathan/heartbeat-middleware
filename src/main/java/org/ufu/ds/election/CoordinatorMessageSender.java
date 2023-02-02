@@ -1,6 +1,7 @@
-package main.java.org.ufu.ds;
+package main.java.org.ufu.ds.election;
 
-import main.java.org.ufu.ds.election.HostInfo;
+import main.java.org.ufu.ds.socket.MulticastSender;
+import main.java.org.ufu.ds.util.Constants;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

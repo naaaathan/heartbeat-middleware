@@ -1,4 +1,4 @@
-package main.java.org.ufu.ds;
+package main.java.org.ufu.ds.election;
 
 import java.io.Serializable;
 
@@ -13,10 +13,6 @@ public class Message implements Serializable {
 
     public String getTopic() {
         return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
     }
 
     @Override

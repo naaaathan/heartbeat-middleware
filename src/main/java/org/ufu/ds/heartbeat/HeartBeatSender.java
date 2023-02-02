@@ -1,6 +1,6 @@
 package main.java.org.ufu.ds.heartbeat;
 
-import main.java.org.ufu.ds.Constants;
+import main.java.org.ufu.ds.util.Constants;
 import main.java.org.ufu.ds.election.HostInfo;
 import main.java.org.ufu.ds.election.Role;
 import main.java.org.ufu.ds.schedule.ScheduledRun;

@@ -1,8 +1,11 @@
 package main.java.org.ufu.ds;
 
+import main.java.org.ufu.ds.election.CoordinatorMessageSender;
 import main.java.org.ufu.ds.election.HostInfo;
 import main.java.org.ufu.ds.election.Role;
 import main.java.org.ufu.ds.heartbeat.*;
+import main.java.org.ufu.ds.socket.MulticastReceiver;
+import main.java.org.ufu.ds.util.SocketMessagesHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,23 +21,17 @@ public class Main {
             System.out.println("Should designate the Role of the server in parameters");
             throw new RuntimeException("Should designate the Role of the server in parameters");
         }
-        try {
-            Thread.sleep(1000L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         Role role = Role.valueOf(args[0]);
         Main.role = role;
 
-        if(role.equals(Role.COORDINATOR)) {
-            List<HostInfo> hostInfos = Helper.loadNodeProperties();
-            Main.hostInfoList = hostInfos;
+        if (Role.COORDINATOR.equals(role)) {
+            Main.hostInfoList = Helper.loadNodeProperties();
         }
 
         System.out.println("STARTED SERVER AS ROLE = " + role);
 
         HeartBeatFactory heartBeatFactory = new HeartBeatFactory();
-
         HeartBeatReceiver heartBeatReceiver = new HeartBeatReceiver();
 
         SocketMessagesHandler socketMessagesHandler = new SocketMessagesHandler(heartBeatReceiver);

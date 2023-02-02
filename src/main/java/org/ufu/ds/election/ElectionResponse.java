@@ -1,7 +1,8 @@
-package main.java.org.ufu.ds;
+package main.java.org.ufu.ds.election;
 
 import main.java.org.ufu.ds.heartbeat.Election;
 import main.java.org.ufu.ds.heartbeat.HeartBeatFactory;
+import main.java.org.ufu.ds.util.Constants;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;

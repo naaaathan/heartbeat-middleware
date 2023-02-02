@@ -1,22 +1,23 @@
-package main.java.org.ufu.ds;
+package main.java.org.ufu.ds.socket;
 
+import main.java.org.ufu.ds.Main;
+import main.java.org.ufu.ds.election.CoordinatorMessage;
+import main.java.org.ufu.ds.election.ElectionResponse;
+import main.java.org.ufu.ds.election.Message;
 import main.java.org.ufu.ds.heartbeat.Election;
 import main.java.org.ufu.ds.heartbeat.HeartBeatFactory;
 import main.java.org.ufu.ds.heartbeat.Helper;
+import main.java.org.ufu.ds.util.Constants;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class MulticastReceiver extends Thread {
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[4096];
 
-    protected InetAddress group = null;
-
     private final HeartBeatFactory heartBeatFactory;
-
 
     public MulticastReceiver(HeartBeatFactory heartBeatFactory) {
         this.heartBeatFactory = heartBeatFactory;
@@ -28,8 +29,6 @@ public class MulticastReceiver extends Thread {
         try {
 
             socket = new MulticastSocket(4446);
-            InetAddress group = InetAddress.getByName("230.0.0.0");
-            socket.joinGroup(group);
 
             try {
 
@@ -43,26 +42,35 @@ public class MulticastReceiver extends Thread {
 
                     switch (topic) {
                         case Constants.COORDINATOR:
-                            CoordinatorMessage cm = (CoordinatorMessage) objectReceived;
-                            Main.hostInfoList = cm.getHostInfoList();
-                            heartBeatFactory.designateHeartBeat(Helper.getThisHostInfo().getRole()).startHeartBeat();
+                            handleCoordinatorMessage((CoordinatorMessage) objectReceived);
                             break;
                         case Constants.ELECTION:
-
-                            socket.send(ElectionResponse.okResponse(packet.getAddress(), packet.getPort(),heartBeatFactory));
-                            new Election(heartBeatFactory);
+                            handleElectionMessage(packet);
                             break;
                         case Constants.OK:
-                            System.out.println("Received OK from node = " + packet.getAddress());
+                            handleOkMessage(packet);
                     }
 
                 }
             } finally {
-                socket.leaveGroup(group);
                 socket.close();
             }
         } catch (IOException e) {
-            System.out.println("ERROR=" + e);
+            System.out.println("Error in MulticastReceiver run =" + e);
         }
+    }
+
+    private void handleCoordinatorMessage(CoordinatorMessage objectReceived) {
+        Main.hostInfoList = objectReceived.getHostInfoList();
+        heartBeatFactory.designateHeartBeat(Helper.getThisHostInfo().getRole()).startHeartBeat();
+    }
+
+    private void handleElectionMessage(DatagramPacket packet) throws IOException {
+        socket.send(ElectionResponse.okResponse(packet.getAddress(), packet.getPort(), heartBeatFactory));
+        new Election(heartBeatFactory);
+    }
+
+    private void handleOkMessage(DatagramPacket packet) {
+        System.out.println("Received OK from node = " + packet.getAddress());
     }
 }

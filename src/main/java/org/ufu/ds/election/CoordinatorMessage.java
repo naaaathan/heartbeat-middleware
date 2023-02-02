@@ -1,6 +1,4 @@
-package main.java.org.ufu.ds;
-
-import main.java.org.ufu.ds.election.HostInfo;
+package main.java.org.ufu.ds.election;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,10 +14,6 @@ public class CoordinatorMessage extends Message implements Serializable {
 
     public List<HostInfo> getHostInfoList() {
         return hostInfoList;
-    }
-
-    public void setHostInfoList(List<HostInfo> hostInfoList) {
-        this.hostInfoList = hostInfoList;
     }
 
     @Override

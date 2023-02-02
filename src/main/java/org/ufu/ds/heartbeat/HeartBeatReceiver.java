@@ -1,6 +1,6 @@
 package main.java.org.ufu.ds.heartbeat;
 
-import main.java.org.ufu.ds.Constants;
+import main.java.org.ufu.ds.util.Constants;
 
 import java.nio.ByteBuffer;
 
